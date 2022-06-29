@@ -11,7 +11,7 @@ rm(list = ls())
 
 source("~/rotation_fall2021/ultra_tree_lambda_fn.R")
 #source("~/rotation_fall2021/init_growth_rate_with_and_without_zeroes.R")
-source("~/rotation_fall2021/init_growth_rate_vec.R")
+source("~/rotation_fall2021/init_growth_rate_vec_fn.R")
 
 SEED=37774323
 initSimPop(SEED,bForce = TRUE)
@@ -21,7 +21,7 @@ initSimPop(SEED,bForce = TRUE)
 #df <- init_growth_rate_with_and_without_zeroes(birthRate_init, nIters = 10)
 
 birthRate_initVec <- c(0.005, 0.01, 0.05, 0.1, 0.5, 1, 10) # per day (units irrelevant, birth only)
-df <- init_growth_rate_vec(birthRate_initVec, nIters = 1000, nYears = 20)
+df <- init_growth_rate_vec_fn(birthRate_initVec, nIters = 1000, nYears = 20)
 
 ggplot(df) + geom_point(aes(x = method, y = log(lambda, base = 10), color = factor(iteration))) + 
   geom_hline(yintercept = c(log(birthRate_initVec, base = 10)), linetype = "dashed") +
