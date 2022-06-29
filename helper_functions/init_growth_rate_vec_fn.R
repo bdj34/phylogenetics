@@ -13,7 +13,7 @@ init_growth_rate_vec_fn <- function(birthRate_init_vec, nIters,
     for (i in c(1:nIters)) {
       
       cfg_init = getDefaultConfig(target_pop_size  = 1e5, ndriver = 1, basefit = 0.2, rate = birthRate_init)
-      sp_init = sim_pop(NULL,params=list(n_sim_days=365*10, b_stop_at_pop_size=1),cfg=cfg_init)
+      sp_init = sim_pop(NULL,params=list(n_sim_days=365*nYears, b_stop_at_pop_size=1),cfg=cfg_init)
       
       popsize.df <- data.frame("time" = sp_init$timestamp, "popsize" = sp_init$pop.size)
       #ggplot(popsize.df, aes(x = time, y = log(popsize, base = 10))) + geom_point() + xlab("time (days)")
