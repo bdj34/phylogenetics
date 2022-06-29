@@ -1,4 +1,4 @@
-init_growth_rate_vec <- function(birthRate_init_vec, nIters, 
+init_growth_rate_vec_fn <- function(birthRate_init_vec, nIters, 
                                                      popsize = 1e5, ndriver = 1, basefit = 0.2, 
                                                      nYears = 10, mutRate = 10000, nTips = 50) {
   
