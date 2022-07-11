@@ -1,4 +1,10 @@
-build_mpBoot_tree_assign_edge_len_fn <- function(vcf, dir) {
+build_mpBoot_tree_assign_edge_len_fn <- function(vcf, dir, patientName, use_saved_tree = T) {
+  
+  outFile <- paste0(dir, patientName, "_tree_with_mutations_from_VCF.rds")
+  if (file.exists(outFile) & use_saved_tree) {
+    tree <- readRDS(outFile)
+    return (tree)
+  }
   
   data_mat_all <- vcf@gt[,2:dim(vcf@gt)[2]]
   mut_info <- vcf@fix[,"INFO"]
@@ -7,12 +13,11 @@ build_mpBoot_tree_assign_edge_len_fn <- function(vcf, dir) {
   ref_nuc <- vcf@fix[,"REF"]
   alt_nuc <- vcf@fix[,"ALT"]
   
-  # Keep only SNVs for the tree building
-  rowsKeep <- which(nchar(ref_nuc) == 1 & nchar(alt_nuc) == 1)
-  rowsKeep_doubleCheck <- grep("SNV", row.names(data_mat_all))
-  rowsRemove <- grep("INDEL", row.names(data_mat_all))
-  stopifnot(all(rowsKeep == rowsKeep_doubleCheck))
-  stopifnot(length(rowsKeep) + length(rowsRemove) == dim(data_mat_all)[1])
+  # Excluded region = CNA regions
+  is_in_excluded_region <- as.numeric(gsub(".*REGION=", "", vcf@fix[,"INFO"]))
+  
+  # Keep only SNVs OUTSIDE EXCLUDED REGION! for the tree building
+  rowsKeep <- which(nchar(ref_nuc) == 1 & nchar(alt_nuc) == 1 & is_in_excluded_region == 0)
   
   data_mat_cut <- data_mat_all[rowsKeep,]
   
@@ -109,6 +114,8 @@ build_mpBoot_tree_assign_edge_len_fn <- function(vcf, dir) {
   
   res_from_data = assign_to_tree(tree, mut, depth,error_rate=p.error)
   tree_with_mutations <- res_from_data$tree
+  
+  saveRDS(tree_with_mutations, outFile)
   
   return(tree_with_mutations)
 }
